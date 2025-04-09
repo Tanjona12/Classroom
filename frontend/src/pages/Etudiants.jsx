@@ -23,7 +23,7 @@ const Etudiants = () => {
     async function getData() {
         const fetchData = async () => {
             try {
-                let result = await fetch("http://localhost:8000/api/ListEtudiant");
+                let result = await fetch("http://localhost:8000/api/ListEtudiants");
                 result = await result.json();
                 setData(result);
             } catch (error) {
@@ -81,7 +81,7 @@ const Etudiants = () => {
                             </div>
                         </td>
                         <th scope="row" className="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            <a href='/profil'><img className="w-10 h-10 rounded-full" src="https://img.freepik.com/vecteurs-libre/cercle-bleu-utilisateur-blanc_78370-4707.jpg" alt="Jese image"/></a>
+                            <a href={`/profil/${item.id}`}><img className="w-10 h-10 rounded-full" src="https://img.freepik.com/vecteurs-libre/cercle-bleu-utilisateur-blanc_78370-4707.jpg" alt="Jese image"/></a>
                             <div className="ps-3">
                                 <div className="text-base font-semibold">{item.nom}</div>
                                 <div className="font-normal text-gray-500">{item.email}</div>
@@ -92,7 +92,8 @@ const Etudiants = () => {
                         </td>
                         <td className="px-6 py-4">
                             <div className="flex items-center">
-                                <div className="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div> Offline
+                                <div className={`h-2.5 w-2.5 rounded-full me-2 text-white ${item.status === 1 ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                                {item.status === 1 ? "Online" : "Offline"}
                             </div>
                         </td>
                         <td className="px-6 py-4">

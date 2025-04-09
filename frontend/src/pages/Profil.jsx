@@ -1,6 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const Profil = () => {
+  const location = useLocation();
+  const etudiantID = location.pathname.split("/")[2];
+
+  const [data, setData] = useState([]);
+  
+      useEffect(() => {
+          getData();
+      }, []);
+  
+      async function getData() {
+          const fetchData = async () => {
+              try {
+                  let result = await fetch(`http://localhost:8000/api/ListEtudiant/${etudiantID}`);
+                  result = await result.json();
+                  setData(result);
+              } catch (error) {
+                  console.error("Erreur lors du chargement de la liste :", error);
+              }
+          }
+          fetchData();
+      }
+
   return (
     <div className="flex justify-center items-center h-screen">
 
@@ -15,7 +38,7 @@ const Profil = () => {
         <div class="px-5 pb-5">
           <a href="#">
             <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
-              RAKOTONDRABE Stefa
+                {data.nom}
             </h5>
           </a>
           <div class="flex items-center mt-2.5 mb-5">
@@ -67,12 +90,12 @@ const Profil = () => {
               </svg>
             </div>
             <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-sm dark:bg-blue-200 dark:text-blue-800 ms-3">
-              2024-2025
+              {data.promotion}
             </span>
           </div>
           <div class="flex items-center justify-between">
             <span class="text-3xl font-bold text-gray-900 dark:text-white">
-              + Actif
+              {data.status === 1 ? "Online" : "Offline"}
             </span>
             <a
               href="#"

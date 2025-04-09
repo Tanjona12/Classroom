@@ -15,6 +15,10 @@ class UserController extends Controller
         return User::all();
     }
 
+    public function indexID($id) {
+        return User::find($id);
+    }
+
     public function register(RegisterUser $request)
     {
         try {
