@@ -1,25 +1,80 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const Cours = () => {
+  const location = useLocation();
+  const courID = location.pathname.split("/")[2];
+
+  const [titre, setTitre] = useState("");
+  const [message, setMessage] = useState("");
+  const [file, setFile] = useState(null);
+
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const formData = new FormData();
+    formData.append("titre", titre);
+    formData.append("message", message);
+    formData.append("id_cour", courID); // récupéré depuis useLocation
+    formData.append("file", file);
+  
+    try {
+      const response = await fetch("http://localhost:8000/api/contentCour/create", {
+        method: "POST",
+        body: formData,
+      });
+  
+      const data = await response.json();
+  
+      if (data.success) {
+        alert("Contenu envoyé !");
+      } else {
+        alert("Erreur : " + data.message);
+      }
+    } catch (error) {
+      console.error("Erreur d'envoi :", error);
+    }
+  };
+  
+  // GET CONTENT
+  const [contents, setContents] = useState([]);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/contentCour/${courID}`);
+        const data = await response.json();
+        setContents(data);
+      } catch (error) {
+        console.error("Erreur lors du chargement des contenus :", error);
+      }
+    };
+  
+    fetchContent();
+  }, [courID]);
+  
   return (
     <div className="pt-24 pl-72 pr-8">
       <div>
-        <form class="max-w-sm mx-auto">
+        <form class="max-w-sm mx-auto" onSubmit={handleSubmit}>
           <label
-            for="message"
+            htmlFor="titre"
             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray"
           >
             Titre :
           </label>
           <input
             type="text"
-            id="text"
+            id="titre"
+            value={titre}
+            onChange={(e) => setTitre(e.target.value)}
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Chapitre I ..."
             required
           />
           <label
-            for="message"
+            htmlFor="message"
             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray"
           >
             Message :
@@ -27,17 +82,20 @@ const Cours = () => {
           <textarea
             id="message"
             rows="4"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Annoncez quelque chose à votre classe"
           ></textarea>
           <label
-            for="message"
+            htmlFor="file"
             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray"
           >
             Importer le fichier :
           </label>
           <input
             type="file"
+            onChange={(e) => setFile(e.target.files[0])}
             rows="4"
             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
@@ -51,72 +109,38 @@ const Cours = () => {
       </div>
 
       <div className="pt-7">
-        <div class="w-full p-4 text-center bg-white border border-gray-200 rounded-lg shadow-sm sm:p-8 dark:bg-gray-800 dark:border-gray-700">
-          <h5 class="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
-            Work fast from anywhere
-          </h5>
-          <p className="dark:text-white">12 fév 2024</p>
-          <p class="mb-5 text-base text-gray-500 sm:text-lg dark:text-gray-400">
-            St ay up to date and move work forward with Flowbite on iOS &
-            Android. Download the app today.
-          </p>
-          <div class="items-center justify-center space-y-4 sm:flex sm:space-y-0 sm:space-x-4 rtl:space-x-reverse">
-            <a
-              href="#"
-              class="w-full sm:w-auto bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300 text-white rounded-lg inline-flex items-center justify-center px-4 py-2.5 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-                />
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                />
-              </svg>
-              <div class="text-left rtl:text-right pl-1">
-                <div class="-mt-1 font-sans text-sm font-semibold">
-                  Visualiser
-                </div>
-              </div>
-            </a>
-            <a
-              href="#"
-              class="w-full sm:w-auto bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300 text-white rounded-lg inline-flex items-center justify-center px-4 py-2.5 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-                />
-              </svg>
-              <div class="text-left rtl:text-right pl-1">
-                <div class="-mt-1 font-sans text-sm font-semibold">
-                  Télécharger
-                </div>
-              </div>
-            </a>
-          </div>
+  {contents.map((content) => (
+    <div
+      key={content.id}
+      className="w-full mb-5 p-4 text-center bg-white border border-gray-200 rounded-lg shadow-sm sm:p-8 dark:bg-gray-800 dark:border-gray-700"
+    >
+      <h5 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">{content.titre}</h5>
+      <p className="text-sm text-gray-400 dark:text-gray-300">{new Date(content.created_at).toLocaleDateString()}</p>
+      <p className="mb-4 text-base text-gray-700 dark:text-gray-300">{content.message}</p>
+
+      {content.file && (
+        <div className="flex justify-center gap-4">
+          <a
+            href={`http://localhost:8000/${content.file}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Visualiser
+          </a>
+          <a
+            href={`http://localhost:8000/${content.file}`}
+            download
+            className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+          >
+            Télécharger
+          </a>
         </div>
-      </div>
+      )}
+    </div>
+  ))}
+</div>
+
     </div>
   );
 };

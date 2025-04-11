@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterUser;
+use App\Http\Requests\EditPostRequest;
 use App\Http\Requests\LoginUser;
 use App\Models\User;
 use Exception;
@@ -17,6 +18,16 @@ class UserController extends Controller
 
     public function indexID($id) {
         return User::find($id);
+    }
+
+    public function update(EditPostRequest $request, $id) {
+        $user = User::find($id);
+
+        $user->nom = $request->nom;
+        $user->email = $request->email;
+        $user->promotion = $request->promotion;
+
+        $user->save();
     }
 
     public function register(RegisterUser $request)

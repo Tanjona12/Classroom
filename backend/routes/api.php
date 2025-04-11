@@ -26,9 +26,12 @@ Route::post('promotion/create', [PromotionController::class, 'createPromotion'])
 
 Route::get('cour', [CourController::class, 'index']);
 Route::post('cour/create', [CourController::class, 'createCour']);
+Route::get('contentCour/{id}', [CourController::class, 'getContentCour']);
+Route::post('contentCour/create', [CourController::class, 'createContentCour']);
 
 Route::get('ListEtudiants', [UserController::class, 'index']);
 Route::get('ListEtudiant/{id}', [UserController::class, 'indexID']);
+Route::get('updateEtudiant/{id}', [UserController::class, 'update']);
 
 
 Route::post('register', [UserController::class, 'register']);
